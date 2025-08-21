@@ -1,0 +1,110 @@
+<!-- index.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous" />
+  <style>
+    .red {
+      color: brown;
+    }
+    .gap {
+      margin-top: 20px;
+    }
+    /* New CSS for centering content */
+    .center-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; /* Set to 100% viewport height */
+      color: blue; /* Text color */
+    }
+    h1 {
+      color: blue; /* Heading color */
+    }
+    /* Add margin between buttons */
+    .button-gap {
+      margin-top: 10px;
+    }
+  </style>
+  <title>Node File Uploads</title>
+</head>
+<body>
+  <div class="container gap">
+    <h1 class="text-center">Secure File Uploads Application</h1>
+    <!-- File requirements -->
+    <p class="text-muted">
+      <strong>File Requirements:</strong>
+      <ul>
+        <li>File type validation: pdf, docx, png, jpg</li>
+        <li>File size limit: max 5MB</li>
+      </ul>
+    </p>
+    <div class="card" style="width: 18rem;">
+      <img class="card-img-top" src="<%= typeof filename == 'undefined' ? '':filename %>" alt="Card image cap" />
+      <div class="card-body">
+        <h5 class="card-title">Upload your file here</h5>
+        <p class="card-text"></p>
+        <form class="file-upload-form" action="/upload" method="POST" enctype="multipart/form-data">
+          <div class="custom-file">
+            <!-- Add accept attribute to specify allowed file types -->
+            <input type="file" name="profilepic" class="custom-file-input" id="validatedCustomFile" accept=".pdf, .docx, .png, .jpg" onchange="updateFileName()" required />
+            <label class="custom-file-label" for="validatedCustomFile" id="fileInputLabel">Choose file...</label>
+            <!-- Add file size restriction message -->
+            <p class="red" id="fileSizeMessage"></p>
+          </div>
+          <br />
+          <button type="submit" onclick="checkFileSize(event)" class="btn btn-primary">Submit</button>
+          <!-- Add spacing between buttons -->
+          <div class="button-gap"></div>
+          <a href="/files" class="btn btn-primary">View Uploaded Files</a>
+        </form>
+        <!-- Success message container -->
+        <div id="successMessage" style="display: none;">
+          <p class="text-success">File successfully uploaded!</p>
+        </div>
+      </div>
+    </div>
+    <br />
+  </div>
+
+  <script src="<%= typeof filename == 'undefined' ? '':filename %>" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <script>
+    function checkFileSize(event) {
+      event.preventDefault(); // Prevent default form submission behavior
+      var input = document.getElementById('validatedCustomFile');
+      var fileSize = input.files[0].size; // Size in bytes
+      var maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      var fileSizeMessage = document.getElementById('fileSizeMessage');
+      var successMessage = document.getElementById('successMessage');
+  
+      if (fileSize > maxSize) {
+        fileSizeMessage.innerText = "File size exceeds the limit of 5MB";
+        successMessage.style.display = 'none'; // Hide success message if size exceeds
+        return false;
+      } else {
+        // Reset the message
+        fileSizeMessage.innerText = "";
+        // Show success message
+        successMessage.style.display = 'block';
+        // Wait for 5 seconds
+        setTimeout(function() {
+          // Submit the form after 5 seconds
+          document.querySelector('.file-upload-form').submit();
+        }, 5000);
+      }
+    }
+
+    function updateFileName() {
+      var input = document.getElementById('validatedCustomFile');
+      var label = document.getElementById('fileInputLabel');
+      var fileName = input.files[0].name;
+      label.innerText = fileName;
+    }
+  </script>
+</body>
+</html>
